@@ -4,7 +4,7 @@ import { Link, usePage } from '@inertiajs/react';
 
 const routes = [
     { name: 'about', path: '/about' },
-    { name: 'streams', path: '/streams' },
+    { name: 'streams', path: '/stream' },
 ];
 
 interface Props {
@@ -35,7 +35,7 @@ const Header = ({ trueCenter }: Props) => {
                         {auth.user ? (
                             <>
                                    <Link href={route('subscribe')}>PRICING</Link>
-                                <Link href={route('dashboard')} method="post">
+                                <Link href={route('home')} method="post">
                                     ACCOUNT
                                 </Link>
                                 <Link href={route('logout')} method="post" as="button">

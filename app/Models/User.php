@@ -70,6 +70,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Category::class)->withTimestamps();
     }
 
+    /**
+     * The nuggets that belong to the user.
+     */
     public function savedNuggets(): BelongsToMany
     {
         return $this->belongsToMany(Nugget::class)->withTimestamps();

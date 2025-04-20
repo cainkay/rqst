@@ -11,47 +11,51 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Cache key based on the latest stream's ID
+        // Get latest stream
         $latestStream = Stream::latest()->first();
-
+        $userId = auth()->id(); // Get current user ID, null if not logged in
+    
         if (!$latestStream) {
             return Inertia::render('home', ['stream' => null]);
         }
-
-        $cacheKey = 'stream_' . $latestStream->id . '_with_grouped_nuggets';
-
-        //remove cache
-        if (Cache::has($cacheKey)) {
-            Cache::forget($cacheKey);
+    
+        // Get the nuggets for this stream with their categories
+        $nuggets = $latestStream->nuggets()->with('category');
+        
+        // If user is logged in, include saved status
+        if ($userId) {
+            $nuggets = $nuggets->withCount(['savedByUsers' => function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            }]);
         }
-
-        // Cache for 1 hour (or adjust as needed)
-        $stream = Cache::remember($cacheKey, 3600, function () use ($latestStream) {
-            // Get the nuggets for this stream with their categories
-            $nuggetsByCategory = $latestStream->nuggets()
-                ->with('category')
-                ->get()
-                ->groupBy('category_id');
-
-            // Convert to a format easier to use in frontend
-            $groupedNuggets = $nuggetsByCategory->map(function ($nuggets, $categoryId) {
-                // Get the category from the first nugget in the group
-                $category = $nuggets->first()->category;
-
-                return [
-                    'category_id' => (int)$categoryId ?: null,
-                    'category_title' => $category ? $category->title : 'Uncategorized',
-                    'nuggets' => $nuggets
-                ];
-            })->values();
-
-            // Add the grouped nuggets to the stream
-            $streamData = $latestStream->toArray();
-            $streamData['nugget_groups'] = $groupedNuggets;
-
-            return $streamData;
+        
+        $nuggets = $nuggets->get();
+        
+        // Add is_saved property to each nugget
+        $nuggets->transform(function ($nugget) use ($userId) {
+            $nugget->is_saved = $userId ? ($nugget->saved_by_users_count > 0) : false;
+            return $nugget;
         });
-
-        return Inertia::render('home', ['stream' => $stream]);
+        
+        // Group by category
+        $nuggetsByCategory = $nuggets->groupBy('category_id');
+    
+        // Convert to a format easier to use in frontend
+        $groupedNuggets = $nuggetsByCategory->map(function ($nuggets, $categoryId) {
+            // Get the category from the first nugget in the group
+            $category = $nuggets->first()->category;
+    
+            return [
+                'category_id' => (int)$categoryId ?: null,
+                'category_title' => $category ? $category->title : 'Uncategorized',
+                'nuggets' => $nuggets
+            ];
+        })->values();
+    
+        // Add the grouped nuggets to the stream
+        $streamData = $latestStream->toArray();
+        $streamData['nugget_groups'] = $groupedNuggets;
+    
+        return Inertia::render('home', ['stream' => $streamData]);
     }
 }

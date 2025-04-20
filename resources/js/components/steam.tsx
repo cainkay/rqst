@@ -44,6 +44,8 @@ const Stream = ({ hideTitle, stream }: Props) => {
                         <p className="text-primary text-3xl font-bold underline mb-10">{nugget.category_title}</p>
                         {nugget.nuggets.map((nugget) => (
                             <Nugget
+                                id={nugget.id}
+                                is_saved={nugget.is_saved}
                                 key={nugget.id}
                                 description={nugget.description}
                                 date={dayjs(nugget.date).format('DD/MM/YYYY')}

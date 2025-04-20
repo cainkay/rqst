@@ -9,12 +9,8 @@ interface Props{
     stream: StreamType
 }
 export default function Welcome({ stream }: Props) {
-    console.log("🚀 ~ Welcome ~ stream:", stream)
     const { auth } = usePage<SharedData>().props;
-    console.log('🚀 ~ Welcome ~ auth:', auth);
-    if (auth.user) {
-        router.visit(route('dashboard'));
-    }
+
     return (
         <>
             <Layout>
