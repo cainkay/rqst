@@ -18,12 +18,11 @@ Route::get('/subscribe', function () {
 })->name('subscribe');
 
 
+Route::get('/stream', [StreamController::class, 'index'])->name('index');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('stream')->name('stream.')->group(function () {
-        // List all streams
-        Route::get('/', [StreamController::class, 'index'])->name('index');
         
-       // Saved streams - place this BEFORE the wildcard route
         Route::get('/saved', [StreamController::class, 'saved'])->name('saved');
         
         // View individual stream - place this AFTER specific routes

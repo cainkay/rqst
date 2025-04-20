@@ -2,12 +2,7 @@ import { cn } from '@/lib/utils';
 import { StreamGrouped } from '@/types/stream';
 import dayjs from 'dayjs';
 import Heading from './heading';
-import CalendarIcon from './icons/calendar-icon';
-import FolderIcon from './icons/folder-icon';
-import PinIcon from './icons/pin-icon';
 import Nugget from './nugget';
-import { Button } from './ui/button';
-
 interface Props {
     hideTitle?: boolean;
     stream: StreamGrouped;
@@ -15,20 +10,6 @@ interface Props {
 const Stream = ({ hideTitle, stream }: Props) => {
     return (
         <div>
-            <section className="flex border-x border-b">
-                <Button variant="ghost" className="gap-3 rounded-none border-r px-4 py-8 text-2xl">
-                    <FolderIcon className="size-6" />
-                    CATEGORIES
-                </Button>
-                <Button variant="ghost" className="gap-3 rounded-none border-r px-4 py-8 text-2xl">
-                    <CalendarIcon className="size-6" />
-                    DATES
-                </Button>
-                <Button variant="ghost" className="gap-2 rounded-none border-r px-4 py-8 text-2xl">
-                    <PinIcon className="size-6" />
-                    LOCATIONS
-                </Button>
-            </section>
             {!hideTitle && (
                 <section className="flex flex-col-reverse items-center lg:flex-row">
                     <p className="px-10 py-5 text-2xl md:text-3xl lg:border-r">

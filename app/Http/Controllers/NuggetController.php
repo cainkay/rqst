@@ -23,14 +23,10 @@ class NuggetController extends Controller
             $isSaved = true;
         }
         
-        if ($request->wantsJson() && !$request->header('X-Inertia')) {
-            return response()->json([
-                'success' => true,
-                'is_saved' => $isSaved
-            ]);
-        }
-
-        //refresh the page
-        return redirect()->back()->with('success', 'Nugget saved successfully!');
+        return response()->json([
+            'success' => true,
+            'is_saved' => $isSaved
+        ]);
+     
     }
 }

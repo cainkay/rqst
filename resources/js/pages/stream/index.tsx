@@ -9,19 +9,21 @@ interface Props {
 export default function Streams({ streams }: Props) {
     return (
         <Layout>
-            <main className='off-center-container'>
-            {streams.map((stream) => (
-                <section 
-                role='button'
-                onClick={() => router.visit(route('stream.show', stream.id))}
-                key={stream.id} className="flex flex-col-reverse lg:items-center lg:flex-row border-b">
-                    <p className="lg:px-10 py-5 lg:py-10 text-2xl md:text-3xl lg:border-r flex-1">
-                        In this stream:&nbsp;
-                        <span className="font-bold">{stream.description}</span>
-                    </p>
-                    <Heading className="lg:px-10 pt-5 lg:py-5 max-w-lg w-full flex-1">{dayjs(stream.date).format('DD/MM/YYYY')}</Heading>
-                </section>
-            ))}
+            <main className="off-center-container">
+                {streams.map((stream) => (
+                    <section
+                        role="button"
+                        onClick={() => router.visit(route('stream.show', stream.id))}
+                        key={stream.id}
+                        className="flex flex-col-reverse border-b lg:flex-row lg:items-center"
+                    >
+                        <p className="flex-1 py-5 text-2xl md:text-3xl lg:border-r lg:px-10 lg:py-10">
+                            In this stream:&nbsp;
+                            <span className="font-bold">{stream.description}</span>
+                        </p>
+                        <Heading className="w-full max-w-lg flex-1 pt-5 lg:px-10 lg:py-5">{dayjs(stream.date).format('DD/MM/YYYY')}</Heading>
+                    </section>
+                ))}
             </main>
         </Layout>
     );
