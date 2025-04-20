@@ -4,13 +4,12 @@ import Header from './header';
 
 interface Props {
     children: React.ReactNode;
-    trueCenter?: boolean;
     hideFooter?: boolean;
 }
-const Layout = ({ children, trueCenter, hideFooter }: Props) => {
+const Layout = ({ children,  hideFooter }: Props) => {
     return (
         <>
-            <Header trueCenter={trueCenter} />
+            <Header />
             {children}
             {!hideFooter && <Footer />}
         </>

@@ -5,6 +5,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NuggetController;
 use App\Http\Controllers\StreamController;
+use App\Http\Controllers\SubscriptionController;
 
 //public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -17,8 +18,14 @@ Route::get('/subscribe', function () {
     return Inertia::render('subscribe');
 })->name('subscribe');
 
-
 Route::get('/stream', [StreamController::class, 'index'])->name('index');
+
+
+Route::prefix('pricing')->name('pricing.')->group(function () {
+    Route::get('/member', [SubscriptionController::class, 'subscribe'])->name('subscribe');
+    Route::get('/free', [SubscriptionController::class, 'free'])->name('free');
+
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('stream')->name('stream.')->group(function () {

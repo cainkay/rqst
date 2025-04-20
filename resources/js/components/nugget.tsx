@@ -6,6 +6,9 @@ import CalendarIcon from './icons/calendar-icon';
 import PinIcon from './icons/pin-icon';
 import SaveIcon from './icons/star-icon';
 import { Button } from './ui/button';
+import { useGlobalStore } from '@/store/global';
+import { SharedData } from '@/types';
+import { usePage } from '@inertiajs/react';
 
 type Props = {
     description: string;
@@ -28,14 +31,25 @@ const Nugget = ({
     is_saved = false,
     clasName = '',
 }: Props) => {
+    const page = usePage<SharedData>();
+    const { user } = page.props.auth;
+    const { displayPaywall } = useGlobalStore();
     const [saved, setSaved] = useState(is_saved || false);
     const [processing, setProcessing] = useState(false);
     const [showSparkle, setShowSparkle] = useState(false);
     const saveButtonRef = useRef<HTMLButtonElement>(null);
 
     const toggleSave = async () => {
-        setProcessing(true);
+    console.log("🚀 ~ user:", user)
+
+        if(!user) {
+            displayPaywall(true);
+            return;
+        } 
+
+
         try {
+            setProcessing(true);
             const response = await axios.post(`/nugget/save/${id}`, {
                 _method: 'POST' // For Laravel method spoofing if needed
             });

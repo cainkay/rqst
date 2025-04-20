@@ -1,3 +1,4 @@
+import PaywallDialog from '@/components/auth/paywall-dialog';
 import Search from '@/components/search';
 import Stream from '@/components/steam';
 import Layout from '@/layouts/layout';
@@ -12,8 +13,7 @@ interface Props {
 }
 export default function Welcome({ stream, categories }: Props) {
     const page = usePage<SharedData>();
-    const { auth } = page.props;
-    console.log("🚀 ~ Welcome ~ auth:", auth)
+    const { user } = page.props.auth;
 
     const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
     const handleCategorySelect = (categoryId: number) => {
@@ -27,14 +27,18 @@ export default function Welcome({ stream, categories }: Props) {
     return (
         <>
             <Layout>
-                {auth.user && (
-                    <div className="off-center-container-no-padding">
-                        <Search categories={categories} selectedCategories={selectedCategories} onCategorySelect={handleCategorySelect} />
-                    </div>
+                {user && (
+                    <>
+                        <div className="off-center-container-no-padding">
+                            <Search categories={categories} selectedCategories={selectedCategories} onCategorySelect={handleCategorySelect} />
+                        </div>
+                    </>
                 )}
                 <main className="off-center-container">
                     <Stream stream={stream} />
                 </main>
+                <PaywallDialog />
+
             </Layout>
         </>
     );
