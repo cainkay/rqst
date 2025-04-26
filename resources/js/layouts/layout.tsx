@@ -5,13 +5,14 @@ import Header from './header';
 interface Props {
     children: React.ReactNode;
     hideFooter?: boolean;
+    hideDetails?: boolean;
 }
-const Layout = ({ children,  hideFooter }: Props) => {
+const Layout = ({ children,  hideFooter , hideDetails = false }: Props) => {
     return (
         <>
             <Header />
             {children}
-            {!hideFooter && <Footer />}
+            {!hideFooter && <Footer hideDetails={hideDetails} />}
         </>
     );
 };

@@ -162,6 +162,18 @@
     body {
         @apply bg-background text-foreground;
     }
+
+    .rdp-dropdown {
+        + div {
+          display: flex;
+          align-items: center;
+        }
+      }
+      
+      .rdp-caption_dropdowns {
+        width: 100%;
+        gap: 0.5rem;
+      }
 }
 
 @utility off-center-container {

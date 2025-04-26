@@ -10,14 +10,14 @@ import { useGlobalStore } from '@/store/global';
 import { SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
 
-type Props = {
+interface Props {
     description: string;
     id: number;
     date: string;
     location: string;
     url: string;
     is_saved?: boolean;
-    clasName?: string;
+    className?: string;
     action?: (id: number) => void;
 }
 
@@ -29,7 +29,7 @@ const Nugget = ({
     url,
     action,
     is_saved = false,
-    clasName = '',
+    className = '',
 }: Props) => {
     const page = usePage<SharedData>();
     const { user } = page.props.auth;
@@ -73,7 +73,7 @@ const Nugget = ({
     };
 
     return (
-        <article className={clasName}>
+        <article className={cn('py-4',className)}>
             <p className="mb-6 font-thin">{description}</p>
             <section className="flex items-center gap-4">
                 <p className="flex items-center gap-2">
@@ -91,7 +91,7 @@ const Nugget = ({
                         onClick={toggleSave} 
                         disabled={processing} 
                         className={cn(
-                            'rounded-full relative z-10 transition-all duration-300',
+                            'rounded-full relative z-10 transition-all duration-300 hidden',
                             saved ? 'bg-bright-blue text-white' : ''
                         )}
                     >

@@ -6,30 +6,57 @@ use App\Models\Category;
 use App\Models\Stream;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Get latest stream
-        $latestStream = Stream::latest()->first();
-        $userId = auth()->id(); // Get current user ID, null if not logged in
+        $current_page = $request->query('page', 1);
+        $user = auth()->user();
+        $isSubscribed = $user && $user->subscribed();
+        $userId = $user ? $user->id : null;
 
-        if (!$latestStream) {
+        if (!$user) {
+           $current_page = 1;
+        }
+        
+        // Build the query for streams
+        $streamsQuery = Stream::orderBy('date', 'desc');
+        
+        // If user is present but not subscribed, restrict to last 3 months
+        if ($user && !$isSubscribed) {
+            $threeMonthsAgo = Carbon::now()->subMonths(3);
+            $streamsQuery->where('date', '>=', $threeMonthsAgo);
+        }
+        
+
+        // Get paginated streams
+        $streams = $streamsQuery->paginate(1, ['*'], 'page', $current_page);
+        
+        if ($streams->isEmpty()) {
             return Inertia::render('home', ['stream' => null]);
         }
 
-        // Get the nuggets for this stream with their categories
-        $nuggets = $latestStream->nuggets()->with('category');
+        
+        // Get the current stream from the paginated collection
+        $currentStream = $streams->first();
 
+
+        
+        // Get the nuggets with category
+        $nuggets = $currentStream->nuggets()
+            ->with(['category'])
+            ->latest();
+        
         // If user is logged in, include saved status
-        if ($userId) {
+        if (!$userId) {
+            $nuggets = $nuggets->take(5)->get();
+        } else {
             $nuggets = $nuggets->withCount(['savedByUsers' => function ($query) use ($userId) {
                 $query->where('user_id', $userId);
-            }]);
+            }])->get();
         }
-
-        $nuggets = $nuggets->get();
 
         // Add is_saved property to each nugget
         $nuggets->transform(function ($nugget) use ($userId) {
@@ -52,13 +79,29 @@ class HomeController extends Controller
             ];
         })->values();
 
-        //get all categories
-        $category = Category::all();
+     
 
         // Add the grouped nuggets to the stream
-        $streamData = $latestStream->toArray();
+        $streamData = $currentStream->toArray();
         $streamData['nugget_groups'] = $groupedNuggets;
+        // Add pagination metadata from the streams pagination
+        $streamData['current_page'] = $streams->currentPage();
+        $streamData['last_page'] = $streams->lastPage();
+        $streamData['per_page'] = $streams->perPage();
+        $streamData['total'] = $streams->total();
+        
+        // Add subscription status to the response
+        $streamData['is_subscribed'] = $isSubscribed;
 
-        return Inertia::render('home', ['stream' => $streamData, 'categories' => $category]);
+
+        if ($request->wantsJson() && !$request->header('X-Inertia')) {
+            return response()->json([
+                'stream' => $streamData,
+            ]);
+        }
+    
+
+        $categories = Category::all();
+        return Inertia::render('home', ['stream' => $streamData, 'categories' => $categories]);
     }
 }

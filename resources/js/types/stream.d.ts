@@ -57,4 +57,20 @@ export interface StreamGrouped {
         category_title: string;
         nuggets: Nugget[];
     }[]
+    total: number;
+    last_page: number;
+    current_page: number;
+    per_page: number;
+}
+export interface StreamSolo {
+    id: number;
+    description: string;
+    date: string; // ISO date string format
+    created_at?: string;
+    updated_at?: string;
+    nugget_groups: {
+        category_id: number;
+        category_title: string;
+        nuggets: Nugget[];
+    }[]
 }
