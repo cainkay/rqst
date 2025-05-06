@@ -22,6 +22,20 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
     })
+    ->withMiddleware(function (Middleware $middleware) {
+        // Trust all proxies - this is crucial when using forceHttps
+        $middleware->trustProxies(at: '*');
+        
+        // Optional: Exclude URL params that might be added by analytics
+        $middleware->validateSignatures(except: [
+            'fbclid',
+            'utm_campaign',
+            'utm_content',
+            'utm_medium',
+            'utm_source',
+            'utm_term',
+        ]);
+    })
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
