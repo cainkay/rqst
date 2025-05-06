@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'log'),
+    'default' => env('MAIL_MAILER', 'mailgun'),
 
     /*
     |--------------------------------------------------------------------------
@@ -36,7 +36,6 @@ return [
     */
 
     'mailers' => [
-
         'smtp' => [
             'transport' => 'smtp',
             'scheme' => env('MAIL_SCHEME'),
@@ -63,6 +62,10 @@ return [
 
         'resend' => [
             'transport' => 'resend',
+        ],
+
+        'mailgun' => [
+            'transport' => 'mailgun',
         ],
 
         'sendmail' => [
