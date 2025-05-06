@@ -7,6 +7,8 @@ set -e
 # Build assets using NPM
 npm run build
 
+php artisan migrate --force
+
 # Clear cache
 php artisan optimize:clear
 
