@@ -14,19 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
-
-        $middleware->web(append: [
-            HandleAppearance::class,
-            HandleInertiaRequests::class,
-            AddLinkHeadersForPreloadedAssets::class,
-        ]);
-    })
-    ->withMiddleware(function (Middleware $middleware) {
-        // Trust all proxies - this is crucial when using forceHttps
         $middleware->trustProxies(at: '*');
         
-        // Optional: Exclude URL params that might be added by analytics
         $middleware->validateSignatures(except: [
             'fbclid',
             'utm_campaign',
@@ -34,6 +23,14 @@ return Application::configure(basePath: dirname(__DIR__))
             'utm_medium',
             'utm_source',
             'utm_term',
+        ]);
+
+        $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
+
+        $middleware->web(append: [
+            HandleAppearance::class,
+            HandleInertiaRequests::class,
+            AddLinkHeadersForPreloadedAssets::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
