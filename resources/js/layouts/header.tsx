@@ -46,7 +46,7 @@ const Header = () => {
 
     const handlerSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        router.visit('releases');
+        router.visit('/releases');
     };
 
     return (
@@ -79,7 +79,7 @@ const Header = () => {
                             ))}
                             {auth.user ? (
                                 <>
-                                    <Link href={route('subscribe')}>PRICING</Link>
+                               {!auth.user.subscribed &&     <Link href={route('subscribe')}>PRICING</Link>}
                                     <Link href={route('profile.edit')}>ACCOUNT</Link>
                                     <Link href={route('logout')} method="post" as="button">
                                         LOGOUT

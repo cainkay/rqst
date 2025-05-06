@@ -2,24 +2,26 @@ import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { useStreams } from '@/hooks/use-streams';
 import Layout from '@/layouts/layout';
+import { cn } from '@/lib/utils';
+import { useGlobalStore } from '@/store/global';
 import { SharedData } from '@/types';
 import { Stream } from '@/types/stream';
-import { router, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import dayjs from 'dayjs';
+import { XIcon } from 'lucide-react';
 interface Props {
     streams: Stream[];
     current_page: number;
     total: number;
     last_page: number;
     per_page: number;
-    
 }
 export default function Streams(props: Props) {
-    console.log("🚀 ~ Streams ~ props:", props)
     const page = usePage<SharedData>();
     const { user } = page.props.auth;
 
-    const { streams, hasMorePages, loadMore, isLoadingMore , isError } = useStreams({
+    const { displayPaywall } = useGlobalStore();
+    const { streams, hasMorePages, loadMore, isLoadingMore } = useStreams({
         initialData: {
             data: props.streams,
             current_page: props.current_page,
@@ -28,18 +30,34 @@ export default function Streams(props: Props) {
             last_page: props.last_page,
         },
     });
-    console.log("🚀 ~ Streams ~ isError:", isError)
-    console.log("🚀 ~ Streams ~ streams:", streams)
+
+
+    const handleStreamViewClick = (stream: Stream) => {
+        if (user && user.subscribed) {
+            router.visit(route('stream.show', stream.id));
+        } else {
+            displayPaywall(true);
+        }
+    }
 
     return (
         <Layout>
             <main className="off-center-container">
-                {streams.map((stream) => (
+                <section className="w-full max-w-lg flex-1 pt-5 lg:px-10 lg:py-10">
+                    <p className="mb-5 text-3xl">{user ? 'All Streams...' : 'Todays Streams...'}</p>
+                    <Button asChild variant={'secondary'} className="rounded-full">
+                        <Link href="/">
+                            <XIcon className="size-4" />
+                            Close
+                        </Link>
+                    </Button>
+                </section>
+                {streams.map((stream, index) => (
                     <section
                         role="button"
-                        onClick={() => router.visit(route('stream.show', stream.id))}
-                        key={stream.id}
-                        className="flex flex-col-reverse border-b lg:flex-row lg:items-center"
+                        onClick={() => handleStreamViewClick(stream)}
+                        key={index}
+                        className={cn('flex flex-col-reverse border-b lg:flex-row lg:items-center', index === 0 && 'border-t')}
                     >
                         <p className="flex-1 py-5 text-2xl md:text-3xl lg:border-r lg:px-10 lg:py-10">
                             In this stream:&nbsp;

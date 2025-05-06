@@ -1,4 +1,3 @@
-import PaywallDialog from '@/components/auth/paywall-dialog';
 import Search from '@/components/search';
 import Stream from '@/components/steam';
 import { Button } from '@/components/ui/button';
@@ -14,7 +13,6 @@ interface Props {
     categories: Category[];
 }
 export default function Welcome({ stream, categories }: Props) {
-    console.log('🚀 ~ Welcome ~ stream:', stream);
     const page = usePage<SharedData>();
     const { user } = page.props.auth;
 
@@ -55,6 +53,7 @@ export default function Welcome({ stream, categories }: Props) {
                     <>
                         <div className="off-center-container-no-padding">
                             <Search
+                                
                                 selectedLGAs={selectedLGAs}
                                 setSelectedLGAs={setSelectedLGAs}
                                 selectedStates={selectedStates}
@@ -117,7 +116,6 @@ export default function Welcome({ stream, categories }: Props) {
                         <p className="py-10">This is the end</p>
                     )}
                 </main>
-                <PaywallDialog />
             </Layout>
         </>
     );

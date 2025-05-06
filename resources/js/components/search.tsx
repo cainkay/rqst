@@ -21,7 +21,7 @@ interface Props {
     selectedLGAs: string[];
     setSelectedStates: (states: string[]) => void;
     setSelectedLGAs: (lgas: string[]) => void;
-    onSearch: () => void;
+    onSearch?: () => void;
 }
 
 const Search = ({
