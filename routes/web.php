@@ -20,8 +20,7 @@ Route::get('/about', function () {
 
 Route::get('/subscribe', function () {
     return Inertia::render('subscribe');
-})->name('subscribe')
-->middleware(RedirectIfAuthenticated::class);;
+})->name('subscribe');
 
 Route::get('/stream', [StreamController::class, 'index'])->name('index');
 
