@@ -9,7 +9,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Layout from '@/layouts/layout';
-import AuthSimpleLayout from '@/layouts/auth/auth-simple-layout';
 import SiteLogo from '@/components/icons/site-logo';
 
 type LoginForm = {

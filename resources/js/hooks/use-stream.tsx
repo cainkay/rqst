@@ -2,6 +2,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { DateRange } from 'react-day-picker';
 import { StreamGrouped as StreamType } from '@/types/stream';
+import { User } from '@/types';
 
 interface UseStreamsParams {
   initialStream: StreamType;
@@ -9,6 +10,7 @@ interface UseStreamsParams {
   selectedLGAs?: string[];
   selectedCategories?: number[];
   dateRange?: DateRange;
+  user?: User
 }
 
 interface StreamResponse {
@@ -17,7 +19,7 @@ interface StreamResponse {
 
 export const useStream = ({
   initialStream,
-
+  user
 }: UseStreamsParams) => {
   // Fetch streams with pagination
   const fetchStreams = async ({ pageParam = 1 }) => {
@@ -38,7 +40,7 @@ export const useStream = ({
     isError,
     refetch
   } = useInfiniteQuery({
-    queryKey: ['stream'],
+    queryKey: ['stream', user],
     queryFn: fetchStreams,
     initialPageParam: 1,
     initialData: {
@@ -53,6 +55,7 @@ export const useStream = ({
       return allPages.length + 1;
     },
   });
+    console.log("🚀 ~ user:", user)
 
   // Extract all streams from all pages
   const allStreams = data?.pages.flatMap(page => [page.stream]) || [];

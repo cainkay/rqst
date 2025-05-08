@@ -30,6 +30,7 @@ export default function Welcome({ stream, categories }: Props) {
 
     const { streams, hasMorePages, loadMore, isLoadingMore } = useStream({
         initialStream: stream,
+        user: user,
     });
 
     const handleCategorySelect = (categoryId: number) => {

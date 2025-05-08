@@ -17,6 +17,7 @@ class HomeController extends Controller
         $isSubscribed = $user && $user->subscribed();
         $userId = $user ? $user->id : null;
 
+
         if (!$user) {
            $current_page = 1;
         }
