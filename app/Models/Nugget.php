@@ -16,6 +16,7 @@ class Nugget extends Model
         'stream_id',
         'category_id',
         'state',
+        'lga',
         'description',
         'date',
         'url'

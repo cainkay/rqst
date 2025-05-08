@@ -5,6 +5,7 @@ interface Props {
     stream: StreamSolo;
 }
 const StreamDetail = ({ stream }: Props) => {
+    console.log("🚀 ~ StreamDetail ~ stream:", stream)
     return (
         <Layout>
             <main className="off-center-container">

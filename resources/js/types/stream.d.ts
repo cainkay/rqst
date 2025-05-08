@@ -12,6 +12,7 @@ export interface Nugget {
     stream_id: number;
     category_id: number | null;
     state: string; // Australian state (NSW, VIC, QLD, etc.)
+    lga: string; 
     description: string;
     date: string; // ISO date string format
     url: string;

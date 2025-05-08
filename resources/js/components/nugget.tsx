@@ -15,6 +15,7 @@ interface Props {
     id: number;
     date: string;
     location: string;
+    lga: string;
     url: string;
     is_saved?: boolean;
     className?: string;
@@ -27,6 +28,7 @@ const Nugget = ({
     date,
     location,
     url,
+    lga,
     action,
     is_saved = false,
     className = '',
@@ -82,6 +84,7 @@ const Nugget = ({
                 </p>
                 <p className="flex items-center gap-2">
                     <PinIcon className="size-4" />
+                    {lga} , 
                     {location}
                 </p>
                 <div className="relative">

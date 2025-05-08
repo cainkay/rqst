@@ -98,6 +98,7 @@ const ReleasePage = ({ releases, categories }: Props) => {
                         description={nugget.description}
                         date={dayjs(nugget.date).format('DD/MM/YYYY')}
                         location={nugget.state}
+                        lga={nugget.lga}
                         className={cn('border-b lg:px-10', index === 0 && 'border-t')}
                         url={nugget.url}
                     />

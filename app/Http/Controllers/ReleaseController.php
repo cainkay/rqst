@@ -15,10 +15,11 @@ class ReleaseController extends Controller
         $user = auth()->user();
         $isSubscribed = $user && $user->subscribed();
         $page = $request->query('page', 1);
-        $perPage = 20; // Number of items per page
+        $perPage = 10; // Number of items per page
         $category = $request->query('categories');
         $search = $request->query('search');
         $state = $request->query('states');
+        $lga = $request->query('lgas');
         $start_date = $request->query('start_date');
         $end_date = $request->query('end_date');
         
@@ -57,6 +58,14 @@ class ReleaseController extends Controller
             $query->whereIn('state', $state);
         }
 
+        // Filter release by LGA
+        if ($lga) {
+            if (is_string($lga)) {
+                $lga = explode(',', $lga);
+            }
+            $query->whereIn('lga', $lga);
+        }
+
         // Filter release by date range
         if ($start_date || $end_date) {
             if ($start_date && $end_date) {
@@ -68,7 +77,7 @@ class ReleaseController extends Controller
             } 
         }
 
-        // Execute the query with pagination
+        // Execute the query with paginationst
         $releases = $query->paginate($perPage, ['*'], 'page', $page);
 
         // Return JSON if requested

@@ -117,6 +117,7 @@ const Search = ({
                                     <p className="text-lg whitespace-nowrap">To: {date?.to ? dayjs(date.to).format('DD|MM|YYYY') : '__|__|____'} </p>
                                 </section>
                             </div>
+                            <Button onClick={onSearch}>Update</Button>
                         </div>
                     )}
                     {activeView === 'location' && (
@@ -127,6 +128,7 @@ const Search = ({
                                 setSelectedStates={setSelectedStates}
                                 setSelectedLGAs={setSelectedLGAs}
                             />
+                            <Button onClick={onSearch}>Update</Button>
                         </div>
                     )}
                 </section>

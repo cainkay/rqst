@@ -29,6 +29,7 @@ const Stream = ({ hideTitle, stream }: Props) => {
                                 id={nugget.id}
                                 is_saved={nugget.is_saved}
                                 key={nugget.id}
+                                lga={nugget.lga}
                                 description={nugget.description}
                                 date={dayjs(nugget.date).format('DD/MM/YYYY')}
                                 location={nugget.state}

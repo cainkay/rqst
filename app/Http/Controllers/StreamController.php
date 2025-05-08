@@ -55,6 +55,7 @@ class StreamController extends Controller
             ->get();
 
 
+
         // Add is_saved property to each nugget
         $nuggets->transform(function ($nugget) use ($userId) {
             $nugget->is_saved = $userId ? ($nugget->saved_by_users_count > 0) : false;

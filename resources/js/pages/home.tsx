@@ -6,7 +6,7 @@ import Layout from '@/layouts/layout';
 import { useFilterStore } from '@/store/filter';
 import { SharedData } from '@/types';
 import { Category, StreamGrouped as StreamType } from '@/types/stream';
-import { usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 
 interface Props {
     stream: StreamType;
@@ -30,10 +30,6 @@ export default function Welcome({ stream, categories }: Props) {
 
     const { streams, hasMorePages, loadMore, isLoadingMore } = useStream({
         initialStream: stream,
-        selectedStates,
-        selectedLGAs,
-        selectedCategories,
-        dateRange: date,
     });
 
     const handleCategorySelect = (categoryId: number) => {
@@ -46,6 +42,10 @@ export default function Welcome({ stream, categories }: Props) {
         setSelectedCategories(currentCategories);
     };
 
+    const handleSearch = () => {
+        // Implement search logic here
+        router.visit('/releases')
+    };
     return (
         <>
             <Layout>
@@ -53,7 +53,7 @@ export default function Welcome({ stream, categories }: Props) {
                     <>
                         <div className="off-center-container-no-padding">
                             <Search
-                                
+                                onSearch={handleSearch}
                                 selectedLGAs={selectedLGAs}
                                 setSelectedLGAs={setSelectedLGAs}
                                 selectedStates={selectedStates}
