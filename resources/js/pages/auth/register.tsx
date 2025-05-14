@@ -13,9 +13,7 @@ type RegisterForm = {
     first_name: string;
     last_name: string;
     email: string;
-    phone: string;
     password: string;
-    password_confirmation: string;
 };
 
 export default function Register() {
@@ -23,15 +21,13 @@ export default function Register() {
         first_name: '',
         last_name: '',
         email: '',
-        phone: '',
         password: '',
-        password_confirmation: '',
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         post(route('register'), {
-            onFinish: () => reset('password', 'password_confirmation'),
+            onFinish: () => reset('password'),
         });
     };
 
@@ -93,23 +89,6 @@ export default function Register() {
 
                             <div className="grid gap-2">
                                 <Input
-                                    id="phone"
-                                    type="text"
-                                    required
-                                    tabIndex={3}
-                                    autoComplete="phone"
-                                    value={data.phone}
-                                    onChange={(e) => setData('phone', e.target.value)}
-                                    disabled={processing}
-                                    placeholder="phone number"
-                                />
-                                <InputError message={errors.email} />
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-2">
-                            <div className="grid gap-2">
-                                <Input
                                     id="password"
                                     type="password"
                                     required
@@ -118,27 +97,14 @@ export default function Register() {
                                     value={data.password}
                                     onChange={(e) => setData('password', e.target.value)}
                                     disabled={processing}
-                                    placeholder="Password"
+                                    placeholder="password"
                                 />
                                 <InputError message={errors.password} />
                             </div>
-
-                            <div className="grid gap-2">
-                                <Input
-                                    id="password_confirmation"
-                                    type="password"
-                                    required
-                                    tabIndex={5}
-                                    autoComplete="new-password"
-                                    value={data.password_confirmation}
-                                    onChange={(e) => setData('password_confirmation', e.target.value)}
-                                    disabled={processing}
-                                    placeholder="Confirm password"
-                                />
-                                <InputError message={errors.password_confirmation} />
-                            </div>
+                       
                         </div>
 
+               
                         <Button type="submit" className="mt-2 w-full" tabIndex={6} disabled={processing}>
                             {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                             Create account

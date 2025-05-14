@@ -46,7 +46,10 @@ class ReleaseController extends Controller
         // Filter release by search
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('description', 'like', '%' . $search . '%');
+                // Convert the search term to lowercase
+                $search = strtolower($search);
+                // Use LOWER() function on the description column for case-insensitive comparison
+                $q->whereRaw('LOWER(description) LIKE ?', ['%' . $search . '%']);
             });
         }
         

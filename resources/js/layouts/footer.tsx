@@ -3,27 +3,25 @@ import { Button } from '@/components/ui/button';
 import { SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 
-const Footer = ({ hideDetails = false } : { hideDetails?: boolean}) => {
+const Footer = ({ hideDetails = false }: { hideDetails?: boolean }) => {
     const page = usePage<SharedData>();
-    const { auth } = page.props;
+    const user = page.props.auth?.user;
 
     return (
         <footer className="bg-black">
-            {!hideDetails && <>
-            {auth.user ? <>{!auth.user.subscribed && <Message free={false} />}</> : <Message free={true} />}
-            </>}
-            <section className="off-center-container">
+            {!hideDetails && <>{user ? <>{user.is_free_trial && <Message free={false} />}</> : <Message free={true} />}</>}
+            <section className="lg:off-center-container">
                 <p className="text-background border-background border-x border-t px-10 py-5 uppercase">
                     &copy; RQST.INFO {new Date().getFullYear()}. <Link href="/privacy-policy">Privacy Policy. </Link>{' '}
                     <Link href="/terms-of-service">Terms of Service. </Link>
-                    <Link href="/terms-of-service">GET IN TOUCH </Link>
+                    <Link href="/contact">GET IN TOUCH </Link>
                 </p>
             </section>
         </footer>
     );
 };
 export default Footer;
-const Message = ({ free }: { free: boolean}) => {
+const Message = ({ free }: { free: boolean }) => {
     return (
         <section className="off-center-container flex flex-col lg:flex-row">
             <div className="text-background border-background flex-1 py-10 lg:border-r lg:p-8">

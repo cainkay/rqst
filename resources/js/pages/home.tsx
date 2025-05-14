@@ -14,7 +14,7 @@ interface Props {
 }
 export default function Welcome({ stream, categories }: Props) {
     const page = usePage<SharedData>();
-    const { user } = page.props.auth;
+    const user = page.props.auth?.user;
 
     const {
         selectedStates,
@@ -25,8 +25,8 @@ export default function Welcome({ stream, categories }: Props) {
         setSelectedCategories,
         dateRange: date,
         setDateRange: setDate,
+        setSearchTerm,
     } = useFilterStore();
-
 
     const { streams, hasMorePages, loadMore, isLoadingMore } = useStream({
         initialStream: stream,
@@ -45,7 +45,8 @@ export default function Welcome({ stream, categories }: Props) {
 
     const handleSearch = () => {
         // Implement search logic here
-        router.visit('/releases')
+        setSearchTerm('');
+        router.visit('/releases');
     };
     return (
         <>
@@ -54,6 +55,7 @@ export default function Welcome({ stream, categories }: Props) {
                     <>
                         <div className="off-center-container-no-padding">
                             <Search
+                                isAllowed={user.subscribed}
                                 onSearch={handleSearch}
                                 selectedLGAs={selectedLGAs}
                                 setSelectedLGAs={setSelectedLGAs}
@@ -104,18 +106,20 @@ export default function Welcome({ stream, categories }: Props) {
                         </section>
                     </div>
                 )}
-                <main className="off-center-container">
+                <main>
                     {streams.map((stream) => (
-                        <Stream key={stream.id} stream={stream} />
+                        <Stream isAllowed={user && user.subscribed} key={stream.id} categories={categories} stream={stream} />
                     ))}
 
-                    {user && hasMorePages ? (
-                        <Button className="my-5 rounded-full" size={'lg'} disabled={isLoadingMore} onClick={() => loadMore()}>
-                            Load more
-                        </Button>
-                    ) : (
-                        <p className="py-10">This is the end</p>
-                    )}
+                    <div className="off-center-container">
+                        {user && user.subscribed && hasMorePages ? (
+                            <Button className="my-5 rounded-full" size={'lg'} disabled={isLoadingMore} onClick={() => loadMore()}>
+                                Load more
+                            </Button>
+                        ) : (
+                            <p className="py-10">This is the end</p>
+                        )}
+                    </div>
                 </main>
             </Layout>
         </>

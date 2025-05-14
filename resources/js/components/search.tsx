@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { DateRange } from 'react-day-picker';
 import { Calendar } from './ui/calendar';
 import LocationSelector from './ui/location-selector';
+import { useGlobalStore } from '@/store/global';
 
 interface Props {
     categories: Category[];
@@ -22,6 +23,7 @@ interface Props {
     setSelectedStates: (states: string[]) => void;
     setSelectedLGAs: (lgas: string[]) => void;
     onSearch?: () => void;
+    isAllowed: boolean;
 }
 
 const Search = ({
@@ -31,14 +33,21 @@ const Search = ({
     setDate,
     onCategorySelect,
     onSearch,
+    isAllowed,
     selectedStates = [],
     selectedLGAs = [],
     setSelectedStates = () => {},
     setSelectedLGAs = () => {},
 }: Props) => {
+    console.log("🚀 ~ isAllowed:", isAllowed)
     const [activeView, setActiveView] = useState<'category' | 'date' | 'location' | ''>('');
+    const {displayPaywall} = useGlobalStore();
 
     const handleViewChange = (view: 'category' | 'date' | 'location') => {
+        if(!isAllowed) {
+            displayPaywall(true)
+            return;
+        }
         if (activeView === view) {
             setActiveView('');
             return;
@@ -51,7 +60,7 @@ const Search = ({
             <section className="flex border-x border-b">
                 <Button
                     onClick={() => handleViewChange('category')}
-                    variant="ghost"
+                    variant="dark"
                     className={cn('gap-3 rounded-none border-r px-10! py-8 text-2xl', activeView === 'category' && 'text-background bg-black')}
                 >
                     <FolderIcon className="size-6" />
@@ -59,7 +68,7 @@ const Search = ({
                 </Button>
                 <Button
                     onClick={() => handleViewChange('date')}
-                    variant="ghost"
+                    variant="dark"
                     className={cn('gap-3 rounded-none border-r px-10! py-8 text-2xl', activeView === 'date' && 'text-background bg-black')}
                 >
                     <CalendarIcon className="size-6" />
@@ -67,7 +76,7 @@ const Search = ({
                 </Button>
                 <Button
                     onClick={() => handleViewChange('location')}
-                    variant="ghost"
+                    variant="dark"
                     className={cn('gap-3 rounded-none border-r px-10! py-8 text-2xl', activeView === 'location' && 'text-background bg-black')}
                 >
                     <PinIcon className="size-6" />

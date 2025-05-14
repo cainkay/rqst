@@ -34,7 +34,7 @@ const Nugget = ({
     className = '',
 }: Props) => {
     const page = usePage<SharedData>();
-    const { user } = page.props.auth;
+    const user = page.props.auth?.user;
     const { displayPaywall } = useGlobalStore();
     const [saved, setSaved] = useState(is_saved || false);
     const [processing, setProcessing] = useState(false);
@@ -77,7 +77,7 @@ const Nugget = ({
     return (
         <article className={cn('py-4',className)}>
             <p className="mb-6 font-thin">{description}</p>
-            <section className="flex items-center gap-4">
+            <section className="lg:flex items-center gap-4 space-y-2 lg:space-y-0" >
                 <p className="flex items-center gap-2">
                     <CalendarIcon className="size-4" />
                     {date}

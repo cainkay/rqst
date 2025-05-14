@@ -5,12 +5,12 @@ interface Props {
     stream: StreamSolo;
 }
 const StreamDetail = ({ stream }: Props) => {
-    console.log("🚀 ~ StreamDetail ~ stream:", stream)
+    console.log('🚀 ~ StreamDetail ~ stream:', stream);
     return (
         <Layout>
-            <main className="off-center-container">
+            <main className="">
                 <Stream stream={stream} />
-                <p className="py-10">This is the end</p>
+                <p className="off-center-container py-10">This is the end</p>
             </main>
         </Layout>
     );

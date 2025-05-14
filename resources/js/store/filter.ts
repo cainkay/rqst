@@ -14,6 +14,7 @@ interface FilterState {
     setSelectedCategories: (categories: number[]) => void;
     dateRange?: DateRange;
     setDateRange: (dateRange?: DateRange) => void;
+    clearFilters: () => void;
 }
 
 export const useFilterStore = create<FilterState>()((set) => ({
@@ -27,4 +28,5 @@ export const useFilterStore = create<FilterState>()((set) => ({
     setDateRange: (dateRange) => set({ dateRange }),
     searchTerm: '',
     setSearchTerm: (term) => set({ searchTerm: term }),
+    clearFilters: () => set({ selectedStates: [], selectedLGAs: [], selectedCategories: [], dateRange: undefined, searchTerm: '' })
 }));

@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { useFilterStore } from '@/store/filter';
 import { SharedData } from '@/types';
 import { Category, Nugget as NuggetType } from '@/types/stream';
-import { router, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import dayjs from 'dayjs';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
@@ -27,7 +27,7 @@ interface Props {
 
 const ReleasePage = ({ releases, categories }: Props) => {
     const page = usePage<SharedData>();
-    const { user } = page.props.auth;
+    const user = page.props.auth?.user;
     const [searchTrigger, setSearchTrigger] = useState<Date>();
     const {
         selectedStates,
@@ -38,11 +38,10 @@ const ReleasePage = ({ releases, categories }: Props) => {
         setSelectedCategories,
         dateRange: date,
         setDateRange: setDate,
-        setSearchTerm,
         searchTerm,
     } = useFilterStore();
 
-    const { nuggets, loadMore, hasMorePages, isLoadingMore } = useReleases({
+    const { nuggets, loadMore, hasMorePages, isLoadingMore, isLoading } = useReleases({
         initialData: releases,
         categories: selectedCategories,
         lgas: selectedLGAs,
@@ -67,6 +66,7 @@ const ReleasePage = ({ releases, categories }: Props) => {
             {!searchTerm && (
                 <div className="off-center-container-no-padding">
                     <Search
+                        isAllowed={user?.subscribed || false}
                         selectedLGAs={selectedLGAs}
                         setSelectedLGAs={setSelectedLGAs}
                         selectedStates={selectedStates}
@@ -81,28 +81,29 @@ const ReleasePage = ({ releases, categories }: Props) => {
                 </div>
             )}
 
-            <main className="off-center-container">
-                <StreamHeader
-                    title="The following releases contain your search term:"
-                    buttonText="Clear"
-                    action={() => {
-                        setSearchTerm('');
-                        router.visit(route('home'));
-                    }}
-                />
-                {nuggets.map((nugget, index) => (
-                    <Nugget
-                        id={nugget.id}
-                        is_saved={nugget.is_saved}
-                        key={nugget.id}
-                        description={nugget.description}
-                        date={dayjs(nugget.date).format('DD/MM/YYYY')}
-                        location={nugget.state}
-                        lga={nugget.lga}
-                        className={cn('border-b lg:px-10', index === 0 && 'border-t')}
-                        url={nugget.url}
-                    />
-                ))}
+            <main className="lg:off-center-container">
+                <StreamHeader categories={categories} reload={() => setSearchTrigger(new Date())} />
+                {!isLoading ? (
+                    <div className=''>
+                        {nuggets.map((nugget, index) => (
+                            <Nugget
+                                id={nugget.id}
+                                is_saved={nugget.is_saved}
+                                key={nugget.id}
+                                description={nugget.description}
+                                date={dayjs(nugget.date).format('DD/MM/YYYY')}
+                                location={nugget.state}
+                                lga={nugget.lga}
+                                className={cn('border-b lg:px-10 px-5', index === 0 && 'border-t')}
+                                url={nugget.url}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="flex h-96 items-center justify-center">
+                        <Loader2 className="animate-spin" />
+                    </div>
+                )}
                 {user && hasMorePages ? (
                     <Button className="my-5 rounded-full" size={'lg'} disabled={isLoadingMore} onClick={() => loadMore()}>
                         {isLoadingMore && <Loader2 className="animate-spin" />}

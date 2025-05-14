@@ -18,6 +18,14 @@ Route::get('/about', function () {
     return Inertia::render('about');
 })->name('about');
 
+Route::get('/privacy-policy', function () {
+    return Inertia::render('privacy');
+})->name('privacy');
+
+Route::get('/terms-of-service', function () {
+    return Inertia::render('terms');
+})->name('terms');
+
 Route::get('/subscribe', function () {
     return Inertia::render('subscribe');
 })->name('subscribe');
@@ -30,7 +38,7 @@ Route::prefix('pricing')->name('pricing.')->group(function () {
     Route::get('/free', [SubscriptionController::class, 'free'])->name('free');
 });
 
-Route::get('/checkout', function () {
+Route::post('/checkout', function () {
     $user = Auth::user();
 
     return $user->newSubscription('default', 'price_1RH1yOB3XJ0LEZxxEq3jjjAm')
@@ -53,10 +61,10 @@ Route::get('/checkout', function () {
             //     ]
             // ],
         ]);
-});
+})->name('checkout');
 
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth',])->group(function () {
     Route::prefix('stream')->name('stream.')->group(function () {
         Route::get('/saved', [StreamController::class, 'saved'])->name('saved');
 

@@ -39,6 +39,11 @@ class HandleInertiaRequests extends Middleware
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
+        //if user is not subscribed but registration date is within 14 days, 
+        $subscribed = $request->user() && $request->user()->subscribed()
+            ? true
+            : ($request->user() && $request->user()->created_at->diffInDays(now()) <= 14);
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -46,7 +51,8 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user() ? [
                     ...$request->user()->toArray(),
-                    'subscribed' => $request->user()->subscribed(),
+                    'subscribed' => $subscribed ,
+                    'is_free_trial' => !$request->user()->subscribed(),
                     'subscription' => $request->user()->subscription(),
                 ] : null,
             ],
