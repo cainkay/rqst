@@ -41,17 +41,17 @@ Route::get('/checkout', function () {
             'customer_update' => [
                 'name' => 'auto',
             ],
-            'custom_fields' => [
-                [
-                    'key' => 'company',
-                    'label' => [
-                        'type' => 'custom',
-                        'custom' => 'Company Name',
-                    ],
-                    'type' => 'text',
-                    'optional' => true,
-                ]
-            ],
+            // 'custom_fields' => [
+            //     [
+            //         'key' => 'company',
+            //         'label' => [
+            //             'type' => 'custom',
+            //             'custom' => 'Company Name',
+            //         ],
+            //         'type' => 'text',
+            //         'optional' => true,
+            //     ]
+            // ],
         ]);
 });
 
