@@ -18,36 +18,32 @@ const routes = [
 ];
 
 const Header = () => {
+    const headerRef = useRef<HTMLDivElement>(null);
     const page = usePage<SharedData>();
     const { auth } = page.props;
-    const [showLoginMenu, setShowLoginMenu] = useState(false);
-    const menuRef = useRef<HTMLDivElement>(null);
     const loginButtonRef = useRef<HTMLAnchorElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
     const { setSearchTerm, clearFilters } = useFilterStore();
     const [keyword, setKeyword] = useState('');
     const [searchActive, setSearchActive] = useState(false);
     const [showMobileMenu, setShowMobileMenu] = useState(false);
-    const { displayPaywall } = useGlobalStore();
+    const { displayPaywall, showLoginMenu, setShowLoginMenu } = useGlobalStore();
 
     // Close menu when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                menuRef.current &&
-                !menuRef.current.contains(event.target as Node) &&
-                loginButtonRef.current &&
-                !loginButtonRef.current.contains(event.target as Node)
-            ) {
-                setShowLoginMenu(false);
-            }
-        };
+useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+        if (headerRef.current && !headerRef.current.contains(event.target as Node)) {
+            setShowMobileMenu(false);
+            setShowLoginMenu(false);
+        }
+    };
 
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
+    document.addEventListener('mousedown', handleClickOutside); // Changed from 'click'
+    return () => {
+        document.removeEventListener('mousedown', handleClickOutside); // Changed from 'click'
+    };
+}, [headerRef, setShowLoginMenu]);
+ 
 
     // Focus input when search becomes active
     useEffect(() => {
@@ -58,6 +54,8 @@ const Header = () => {
 
     const toggleLoginMenu = (e: React.MouseEvent) => {
         e.preventDefault();
+        console.log("🚀 ~ toggleLoginMenu ~ showLoginMenu:", showLoginMenu)
+
         setShowLoginMenu(!showLoginMenu);
     };
 
@@ -160,7 +158,10 @@ const Header = () => {
     );
 
     return (
-        <header className="bg-background sticky top-0 border-b z-10">
+        <header 
+        ref={headerRef}
+        
+        className="bg-background sticky top-0 border-b z-10">
             <div className="m-auto flex max-w-[1500px] items-center justify-between">
                 <Link
                     href={route('home')}
@@ -238,7 +239,7 @@ const Header = () => {
             )}
 
             {/* Login Mega Menu */}
-            {showLoginMenu && <Authenticate onClose={() => setShowLoginMenu(false)} />}
+            {showLoginMenu && <Authenticate  />}
         </header>
     );
 };

@@ -7,6 +7,7 @@ use App\Http\Controllers\NuggetController;
 use App\Http\Controllers\ReleaseController;
 use App\Http\Controllers\StreamController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Middleware\RedirectSubscribedUsers;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,7 +39,7 @@ Route::prefix('pricing')->name('pricing.')->group(function () {
     Route::get('/free', [SubscriptionController::class, 'free'])->name('free');
 });
 
-Route::post('/checkout', function () {
+Route::get('/checkout', function () {
     $user = Auth::user();
 
     return $user->newSubscription('default', 'price_1RH1yOB3XJ0LEZxxEq3jjjAm')
@@ -64,13 +65,13 @@ Route::post('/checkout', function () {
 })->name('checkout');
 
 
-Route::middleware(['auth',])->group(function () {
+Route::middleware(['auth', ])->group(function () {
     Route::prefix('stream')->name('stream.')->group(function () {
         Route::get('/saved', [StreamController::class, 'saved'])->name('saved');
 
         // View individual stream - place this AFTER specific routes
         Route::get('/{id}', [StreamController::class, 'show'])->name('show')
-            ->where('id', '[0-9]+'); // Limit ID to numbers only
+            ->where('id', '[0-9]+')->middleware(RedirectSubscribedUsers::class);
 
         // You can add more stream-related routes here
         // Route::get('/{id}/edit', [StreamController::class, 'edit'])->name('edit');

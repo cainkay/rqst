@@ -55,17 +55,6 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    /**
-     * Check if user has an active subscription
-     * 
-     * @return bool
-     */
-    public function hasActiveSubscription(): bool
-    {
-        return $this->subscription_expires_at !== null &&
-            $this->subscription_expires_at->isFuture();
-    }
-
 
     public function subscribedCategories(): BelongsToMany
     {

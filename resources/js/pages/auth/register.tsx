@@ -8,21 +8,29 @@ import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Layout from '@/layouts/layout';
+import { useGlobalStore } from '@/store/global';
 
 type RegisterForm = {
     first_name: string;
     last_name: string;
     email: string;
     password: string;
+    type: string;
 };
 
 export default function Register() {
+
+    const params = new URLSearchParams(window.location.search)?.get('type') || 'free';
+
     const { data, setData, post, processing, errors, reset } = useForm<Required<RegisterForm>>({
         first_name: '',
         last_name: '',
         email: '',
         password: '',
+        type: params,
     });
+
+    const { setShowLoginMenu } = useGlobalStore();
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -32,14 +40,40 @@ export default function Register() {
     };
 
     return (
-        <Layout>
+        <Layout hideFooter>
             <Head title="Register" />
             <main className="bg-black">
                 <section className="text-background off-center-container py-10 md:py-30">
-                    <Heading className="text-outline-light font-bold text-black">FREE PLAN</Heading>
+                    <div className="mb-4 max-w-3xl space-y-4">
+                        {params === 'full' ? (
+                            <>
+                                <Heading className="text-outline-light font-bold text-black">JOIN</Heading>
+                                <p className="text-background text-balance">
+                                    Unlimited access to past releases, powerful filters by date, LGA, state and category, and customise your daily
+                                    email notifications.
+                                </p>
+                                <p className="text-2xl font-bold uppercase">
+                                    first you need to sign up or &nbsp;
+                                    <span role="button" onClick={() => setShowLoginMenu(true)} className="text-background underline">
+                                        login
+                                    </span>
+                                </p>
+                            </>
+                        ) : (
+                            <>
+                                <Heading className="text-outline-light font-bold text-black">FREE PLAN</Heading>
+                                <p className="text-background text-balance">
+                                    Get daily email alerts and instant access to today&apos;s releases. As a bonus, you&apos;ll also unlock 14 days of
+                                    full access — including filters, history, and saved releases.
+                                </p>
 
-                    <form className="flex flex-col gap-6 text-black" onSubmit={submit}>
-                        <div className="grid grid-cols-2">
+                                <p className="text-2xl font-bold">SUBSCRIBE NOW</p>
+                            </>
+                        )}
+                    </div>
+
+                    <form className="flex max-w-xl flex-col gap-6 text-black" onSubmit={submit}>
+                        <div className="grid grid-cols-2 gap-4">
                             <div className="grid gap-2">
                                 <Input
                                     id="name"
@@ -71,7 +105,7 @@ export default function Register() {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2">
+                        <div className="grid grid-cols-2 gap-4">
                             <div className="grid gap-2">
                                 <Input
                                     id="email"
@@ -101,21 +135,23 @@ export default function Register() {
                                 />
                                 <InputError message={errors.password} />
                             </div>
-                       
                         </div>
 
-               
-                        <Button type="submit" className="mt-2 w-full" tabIndex={6} disabled={processing}>
-                            {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                            Create account
-                        </Button>
-
-                        <div className="text-muted-foreground text-center text-sm">
-                            Already have an account?{' '}
-                            <TextLink href={route('login')} tabIndex={7}>
-                                Log in
+                        <p className="text-background">
+                            I have read and agree to the{' '}
+                            <TextLink href="/terms-of-service" className="text-background underline" tabIndex={5}>
+                                terms & conditions
+                            </TextLink>{' '}
+                            and{' '}
+                            <TextLink href="/privacy-policy" className="text-background underline" tabIndex={5}>
+                                privacy policy
                             </TextLink>
-                        </div>
+                        </p>
+
+                        <Button type="submit" className="mt-2 max-w-32 rounded-full" tabIndex={6} disabled={processing}>
+                            {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                            SIGN UP
+                        </Button>
                     </form>
                 </section>
             </main>

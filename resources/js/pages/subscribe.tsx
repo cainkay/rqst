@@ -48,7 +48,7 @@ const Subscribe = () => {
     const user = page.props.auth?.user;
 
     return (
-        <Layout hideDetails>
+        <Layout hideFooter>
             <Head>
                 <title>Subscribe</title>
                 <meta name="description" content="Subscribe to RQST" />
@@ -100,9 +100,9 @@ const Subscribe = () => {
                                     </div>
 
                                     <Button asChild className="w-30 rounded-full">
-                                        <Link href={user ? route('checkout') : '/register?type=full'} method={user ? 'post' : 'get'}>
+                                        <a href={user ? '/checkout' : '/register?type=full'} referrerPolicy="no-referrer">
                                             JOIN
-                                        </Link>
+                                        </a>
                                     </Button>
                                 </td>
                             </tr>
@@ -162,9 +162,9 @@ const Subscribe = () => {
                         </section>
                         <h2 className="mb-4 text-2xl font-bold uppercase">Full Membership - $99</h2>
                         <Button asChild className="w-30 rounded-full">
-                            <Link href={user ? route('checkout') : '/register?type=full'} method={user ? 'post' : 'get'}>
+                            <a href={user ? '/checkout' : '/register?type=full'} referrerPolicy="no-referrer">
                                 JOIN
-                            </Link>
+                            </a>
                         </Button>
 
                         <section className="mt-4 mb-10">

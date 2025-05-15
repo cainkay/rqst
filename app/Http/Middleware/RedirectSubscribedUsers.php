@@ -11,21 +11,26 @@ class RedirectSubscribedUsers
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Check if user is authenticated
-        if (Auth::check()) {
-            $user = Auth::user();
-            
-            // Check if the user is subscribed and trying to access /subscribe
-            if ($user->subscribed() && $request->path() === 'subscribe') {
-                return redirect()->route('home');
+        // dump($request->route()->getName());
+        // $routeId = $request->route('id');
+        // dump($routeId);
+
+
+        $user = Auth::user();
+        if ($user) {
+            $subscribed = $user->subscribed()
+                ? true
+                : $user->created_at->diffInDays(now()) <= 14;
+
+            if ($subscribed) {
+                // User is subscribed, allow access
+                return $next($request);
             }
         }
-
-        return $next($request);
+        //throw 403 error
+        abort(403, 'You are not authorized to access this page.');
     }
 }

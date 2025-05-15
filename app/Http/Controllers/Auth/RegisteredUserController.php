@@ -34,6 +34,7 @@ class RegisteredUserController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'type' => 'required|string|in:free,full',
             'password' => ['required', Rules\Password::defaults()],
         ]);
 
@@ -48,6 +49,12 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return to_route('home');
+        if($request->type === 'full') {
+            //redirect checkout
+            return to_route('checkout');
+        } else {
+            return to_route('home');
+        }
+
     }
 }
