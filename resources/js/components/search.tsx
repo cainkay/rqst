@@ -10,9 +10,11 @@ import { DateRange } from 'react-day-picker';
 import { Calendar } from './ui/calendar';
 import LocationSelector from './ui/location-selector';
 import { useGlobalStore } from '@/store/global';
+import { State } from '@/types/state';
 
 interface Props {
     categories: Category[];
+    lgas: State[]
     selectedCategories: number[];
     onCategorySelect?: (categoryId: number) => void;
     date?: DateRange;
@@ -31,6 +33,7 @@ const Search = ({
     selectedCategories,
     date,
     setDate,
+    lgas,
     onCategorySelect,
     onSearch,
     isAllowed,
@@ -134,6 +137,7 @@ const Search = ({
                             <LocationSelector
                                 selectedStates={selectedStates}
                                 selectedLGAs={selectedLGAs}
+                                lgas={lgas}
                                 setSelectedStates={setSelectedStates}
                                 setSelectedLGAs={setSelectedLGAs}
                             />

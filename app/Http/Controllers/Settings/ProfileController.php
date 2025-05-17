@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Models\Category;
+use App\Models\GovernmentUnit;
+use App\Models\State;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,9 +21,37 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $user = Auth::user();
+
+
+        $app_categories = [];
+        $app_states = [];
+        $app_lgas = [];
+        $categories = [];
+        $states = [];
+        $lgas = [];
+
+
+        if ($user->subscribed()) {
+            $app_categories =
+                Category::all();
+            $app_states = State::all();
+            $app_lgas = GovernmentUnit::all();
+            $categories =  $user->subscribedCategories()->pluck('id')->toArray();
+            $states = $user->subscribedStates()->pluck('id')->toArray();
+            $lgas = $user->subscribedLgas()->pluck('id')->toArray();
+        }
+
+
         return Inertia::render('settings/profile', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
+            'categories' => $categories,
+            'app_categories' => $app_categories,
+            'states' => $states,
+            'app_states' => $app_states,
+            'lgas' => $lgas,
+            'app_lgas' => $app_lgas,
         ]);
     }
 

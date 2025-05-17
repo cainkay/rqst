@@ -5,14 +5,17 @@ import { useStream } from '@/hooks/use-stream';
 import Layout from '@/layouts/layout';
 import { useFilterStore } from '@/store/filter';
 import { SharedData } from '@/types';
+import { State } from '@/types/state';
 import { Category, StreamGrouped as StreamType } from '@/types/stream';
 import { router, usePage } from '@inertiajs/react';
+import React from 'react';
 
 interface Props {
     stream: StreamType;
     categories: Category[];
+    lgas: State[];
 }
-export default function Welcome({ stream, categories }: Props) {
+export default function Welcome({ stream, categories, lgas }: Props) {
     const page = usePage<SharedData>();
     const user = page.props.auth?.user;
 
@@ -32,6 +35,7 @@ export default function Welcome({ stream, categories }: Props) {
         initialStream: stream,
         user: user,
     });
+    console.log('🚀 ~ Welcome ~ streams:', streams);
 
     const handleCategorySelect = (categoryId: number) => {
         const currentCategories = [...selectedCategories];
@@ -64,6 +68,7 @@ export default function Welcome({ stream, categories }: Props) {
                                 date={date}
                                 setDate={setDate}
                                 categories={categories}
+                                lgas={lgas}
                                 selectedCategories={selectedCategories}
                                 onCategorySelect={handleCategorySelect}
                             />
@@ -107,8 +112,10 @@ export default function Welcome({ stream, categories }: Props) {
                     </div>
                 )}
                 <main>
-                    {streams.map((stream) => (
-                        <Stream isAllowed={user && user.subscribed} key={stream.id} categories={categories} stream={stream} />
+                    {streams.map((stream, index) => (
+                        <React.Fragment key={index}>
+                          {stream &&  <Stream isAllowed={user && user.subscribed} key={index} categories={categories} stream={stream} />}
+                        </React.Fragment>
                     ))}
 
                     <div className="off-center-container">

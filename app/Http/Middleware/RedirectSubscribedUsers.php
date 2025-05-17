@@ -26,6 +26,13 @@ class RedirectSubscribedUsers
                 : $user->created_at->diffInDays(now()) <= 14;
 
             if ($subscribed) {
+                if(!$user->subscribed() && $request->route()->getName() == 'stream.show') {
+                    //check if route id is equals the lates stream, if not redirect to the latest stream
+                    $latestStream = \App\Models\Stream::latest()->first();
+                    if($latestStream->id != $routeId) {
+                        abort(403, 'You are not authorized to access this page.');
+                    }
+                }
                 // User is subscribed, allow access
                 return $next($request);
             }

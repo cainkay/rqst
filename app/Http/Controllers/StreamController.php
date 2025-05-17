@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Stream;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class StreamController extends Controller
@@ -36,32 +38,38 @@ class StreamController extends Controller
             return response()->json($streams);
         }
 
-        return Inertia::render('stream/index', ['streams' => $streams]);
+        return Inertia::render('stream/index', [
+            'streams' => $streams,
+        ]);
     }
 
     public function show($id)
     {
         $stream = Stream::find($id);
-        $userId = auth()->id();
-
+        $userId = Auth::user()->id;
         if (!$stream) {
             return redirect()->route('home')->with('error', 'Stream not found');
         }
 
-        // Get the nuggets with category
+        // Get the nuggets with category and saved status in a single query
         $nuggets = $stream->nuggets()
             ->with(['category'])
+            ->when($userId, function ($query) use ($userId) {
+                // Only join the pivot table if we have a user ID
+                return $query->leftJoin('nugget_user', function ($join) use ($userId) {
+                    $join->on('nuggets.id', '=', 'nugget_user.nugget_id')
+                        ->where('nugget_user.user_id', '=', $userId);
+                })
+                    // Select all nugget fields and add is_saved field
+                    ->select('nuggets.*', \DB::raw('CASE WHEN nugget_user.user_id IS NOT NULL THEN 1 ELSE 0 END as is_saved'));
+            }, function ($query) {
+                // If no user ID, just select all nugget fields with is_saved as 0
+                return $query->select('nuggets.*', \DB::raw('0 as is_saved'));
+            })
             ->latest()
             ->get();
 
-
-
-        // Add is_saved property to each nugget
-        $nuggets->transform(function ($nugget) use ($userId) {
-            $nugget->is_saved = $userId ? ($nugget->saved_by_users_count > 0) : false;
-            return $nugget;
-        });
-
+        // No need for transform as is_saved is already a property
         // Group by category
         $nuggetsByCategory = $nuggets->groupBy('category_id');
 
@@ -83,7 +91,10 @@ class StreamController extends Controller
 
 
 
-        return Inertia::render('stream/show', ['stream' => $stream]);
+        return Inertia::render('stream/show', [
+            'stream' => $stream,
+            'categories' => Category::all(),
+        ]);
     }
 
 
@@ -93,7 +104,7 @@ class StreamController extends Controller
         $perPage = 5; // Number of items per page
         $offset = ($page - 1) * $perPage;
 
-        $nuggets = auth()->user()->savedNuggets()
+        $nuggets = Auth::user()->savedNuggets()
             ->orderBy('created_at', 'desc')
             ->offset($offset)
             ->limit($perPage)

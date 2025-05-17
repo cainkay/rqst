@@ -3,16 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\GovernmentUnit;
 use App\Models\Nugget;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class ReleaseController extends Controller
 {
-    public function index(Request $request)
-    {
-        $user = auth()->user();
+    public function index(Request $request) {
+        $user = Auth::user();
         $isSubscribed = $user && $user->subscribed();
         $page = $request->query('page', 1);
         $perPage = 10; // Number of items per page
@@ -90,7 +91,8 @@ class ReleaseController extends Controller
 
         return Inertia::render('releases', [
             'releases' => $releases, 
-            'categories' => Category::all()
+            'categories' => Category::all(),
+            'lgas' => GovernmentUnit::all(),
         ]);
     }
 }

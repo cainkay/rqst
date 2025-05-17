@@ -7,9 +7,9 @@ import Layout from '@/layouts/layout';
 import { cn } from '@/lib/utils';
 import { useFilterStore } from '@/store/filter';
 import { SharedData } from '@/types';
+import { State } from '@/types/state';
 import { Category, Nugget as NuggetType } from '@/types/stream';
 import { usePage } from '@inertiajs/react';
-import dayjs from 'dayjs';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -23,9 +23,10 @@ interface Props {
     };
 
     categories: Category[];
+    lgas: State[];
 }
 
-const ReleasePage = ({ releases, categories }: Props) => {
+const ReleasePage = ({ releases, categories, lgas }: Props) => {
     const page = usePage<SharedData>();
     const user = page.props.auth?.user;
     const [searchTrigger, setSearchTrigger] = useState<Date>();
@@ -69,6 +70,7 @@ const ReleasePage = ({ releases, categories }: Props) => {
                         isAllowed={user?.subscribed || false}
                         selectedLGAs={selectedLGAs}
                         setSelectedLGAs={setSelectedLGAs}
+                        lgas={lgas}
                         selectedStates={selectedStates}
                         setSelectedStates={setSelectedStates}
                         date={date}
@@ -87,15 +89,9 @@ const ReleasePage = ({ releases, categories }: Props) => {
                     <div className=''>
                         {nuggets.map((nugget, index) => (
                             <Nugget
-                                id={nugget.id}
-                                is_saved={nugget.is_saved}
+                                nugget={nugget}
                                 key={nugget.id}
-                                description={nugget.description}
-                                date={dayjs(nugget.date).format('DD/MM/YYYY')}
-                                location={nugget.state}
-                                lga={nugget.lga}
                                 className={cn('border-b lg:px-10 px-5', index === 0 && 'border-t')}
-                                url={nugget.url}
                             />
                         ))}
                     </div>

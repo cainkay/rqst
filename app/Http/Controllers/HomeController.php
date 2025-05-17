@@ -3,17 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\GovernmentUnit;
 use App\Models\Stream;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
     public function index(Request $request)
     {
         $current_page = $request->query('page', 1);
-        $user = auth()->user();
+        $user = Auth::user();
         $isSubscribed = $user && $user->subscribed();
         $userId = $user ? $user->id : null;
 
@@ -34,9 +36,13 @@ class HomeController extends Controller
 
         // Get paginated streams
         $streams = $streamsQuery->paginate(1, ['*'], 'page', $current_page);
+
+
+        $categories = Category::all();
+        $lgas = GovernmentUnit::all();
         
         if ($streams->isEmpty()) {
-            return Inertia::render('home', ['stream' => null]);
+            return Inertia::render('home', ['stream' => null, 'categories' => $categories , 'lgas' => $lgas]);
         }
 
         
@@ -102,7 +108,6 @@ class HomeController extends Controller
         }
     
 
-        $categories = Category::all();
-        return Inertia::render('home', ['stream' => $streamData, 'categories' => $categories]);
+        return Inertia::render('home', ['stream' => $streamData, 'categories' => $categories , 'lgas' => $lgas]);
     }
 }

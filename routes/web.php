@@ -42,7 +42,7 @@ Route::prefix('pricing')->name('pricing.')->group(function () {
 Route::get('/checkout', function () {
     $user = Auth::user();
 
-    return $user->newSubscription('default', 'price_1RH1yOB3XJ0LEZxxEq3jjjAm')
+    return $user->newSubscription('default', env('STRIPE_PRICE_ID'))
         ->allowPromotionCodes()
         ->checkout([
             'success_url' => route('home') . '?session_id={CHECKOUT_SESSION_ID}',
@@ -65,7 +65,7 @@ Route::get('/checkout', function () {
 })->name('checkout');
 
 
-Route::middleware(['auth', ])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::prefix('stream')->name('stream.')->group(function () {
         Route::get('/saved', [StreamController::class, 'saved'])->name('saved');
 
@@ -85,7 +85,7 @@ Route::middleware(['auth', ])->group(function () {
     });
 
     Route::prefix('releases')->name('releases.')->group(function () {
-        Route::get('/', [ReleaseController::class, 'index'])->name('release');
+        Route::get('/', [ReleaseController::class, 'index'])->name('index');
 
     });
 
@@ -97,3 +97,4 @@ Route::middleware(['auth', ])->group(function () {
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
+require __DIR__ . '/category.php';

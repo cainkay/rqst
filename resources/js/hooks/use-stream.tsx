@@ -49,7 +49,7 @@ export const useStream = ({
     },
     getNextPageParam: (lastPage, allPages) => {
       // If we've reached the last page, return undefined to signal that there's no more data
-      if (lastPage.stream.last_page <= allPages.length) {
+      if (lastPage.stream?.last_page <= allPages.length) {
         return undefined;
       }
       return allPages.length + 1;

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\GovernmentUnit;
 use App\Models\Stream;
 use App\Models\Nugget;
 use Illuminate\Support\Facades\Log;
@@ -60,6 +61,10 @@ class StreamController extends Controller
                 $category = Category::firstOrCreate(
                     ['title' => $nuggetData['Category']]
                 );
+
+                $gov_unit = GovernmentUnit::firstOrCreate(
+                    ['name' => $nuggetData['LGA']]
+                );
                 
                 // Parse the date
                 $date = Carbon::parse($nuggetData['Date']);
@@ -69,7 +74,7 @@ class StreamController extends Controller
                     'stream_id' => $stream->id,
                     'category_id' => $category->id,
                     'state' => $nuggetData['State'],
-                    'lga' => $nuggetData['LGA'] ?? null, // Add LGA field
+                    'lga' => $gov_unit->name,
                     'description' => $nuggetData['Description'],
                     'date' => $date,
                     'url' => $nuggetData['URL']

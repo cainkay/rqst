@@ -39,6 +39,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'remember_token',
         'stripe_customer_id',
+        'is_admin',
     ];
 
     /**
@@ -58,8 +59,30 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function subscribedCategories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class)->withTimestamps();
+        return $this->belongsToMany(Category::class, 'category_user')
+            ->withTimestamps()
+            ->select('categories.*');
     }
+
+    /**
+     * The states that the user is subscribed to.
+     */
+    public function subscribedStates(): BelongsToMany
+    {
+        return $this->belongsToMany(State::class, 'state_user')
+            ->withTimestamps()
+            ->select('states.*');
+    }
+ 
+
+
+    public function subscribedLgas(): BelongsToMany
+    {
+        return $this->belongsToMany(GovernmentUnit::class, 'government_units_user')
+            ->withTimestamps()
+            ->select('government_units.*');
+    }
+
 
     /**
      * The nuggets that belong to the user.
