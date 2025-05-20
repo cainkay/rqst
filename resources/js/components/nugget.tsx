@@ -69,7 +69,7 @@ const Nugget = ({ nugget, action, className = '' }: Props) => {
                     <PinIcon className="size-4" />
                     {nugget.lga},&nbsp;{nugget.state}
                 </p>
-                <div className="relative">
+               {!user?.is_free_trial && <div className="relative">
                     <Button
                         ref={saveButtonRef}
                         variant={'ghost'}
@@ -98,7 +98,7 @@ const Nugget = ({ nugget, action, className = '' }: Props) => {
                             <span className="absolute top-1/2 left-1/2 size-8 -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full bg-white opacity-30"></span>
                         </div>
                     )}
-                </div>
+                </div>}
                 <Button asChild variant="outline" className="rounded-full">
                     <a href={nugget.url} target="_blank" rel="noopener noreferrer">
                         <PlusIcon />

@@ -84,7 +84,7 @@ export default function Password() {
                 </div>
 
                 <div className="flex items-center gap-4">
-                      <Button className='rounded-full' disabled={processing}>Save password</Button>
+                      <Button className='rounded-full uppercase' disabled={processing}>Save password</Button>
 
                     <Transition
                         show={recentlySuccessful}
@@ -97,6 +97,7 @@ export default function Password() {
                     </Transition>
                 </div>
             </div>
+            <div className='border-b border-background h-[1px] my-6' />
         </form>
     );
 }

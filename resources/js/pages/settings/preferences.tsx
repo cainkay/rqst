@@ -68,7 +68,6 @@ const UserPreferences: React.FC<Props> = ({ states, app_states, lgas, app_lgas, 
         }
     };
 
-
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         patch(route('preference.patch'), {
@@ -79,8 +78,22 @@ const UserPreferences: React.FC<Props> = ({ states, app_states, lgas, app_lgas, 
     return (
         <div className="space-y-8">
             {/* Categories Section */}
-            <section className="text-background mt-10 space-y-6">
+            <section className="text-background mt-6 space-y-6">
                 <h3 className="text-2xl font-bold uppercase">Email Notification Preferences</h3>
+                {/* <div className='flex items-center space-x-2 '>
+                    <Checkbox
+                        id={`notifications`}
+                        onCheckedChange={() => setData('notifications', !data.notifications)}
+                        className="border-white data-[state=checked]:bg-white data-[state=checked]:text-black"
+                    />
+                    <label
+                        htmlFor={`notifications`}
+                        className="cursor-pointer  leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                        
+                        <span className="">Receive email notifications</span>
+                    </label>
+                </div> */}
                 <p>Select the categories you'd like to receive email notifications about.</p>
 
                 <form onSubmit={submit} className="space-y-8">
@@ -200,7 +213,7 @@ const UserPreferences: React.FC<Props> = ({ states, app_states, lgas, app_lgas, 
                     </div>
 
                     {/* Submit Button */}
-                    <Button type="submit" variant="secondary" className="bg-bright-blue text-background rounded-full uppercase" disabled={processing}>
+                    <Button type="submit"  className=" rounded-full uppercase" disabled={processing}>
                         Save Preferences
                     </Button>
                 </form>

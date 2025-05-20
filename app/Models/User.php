@@ -28,6 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'subscription_type',
         'subscription_expires_at',
         'stripe_customer_id',
+        'notifications',
     ];
 
     /**
