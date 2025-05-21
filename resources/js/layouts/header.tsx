@@ -54,8 +54,6 @@ useEffect(() => {
 
     const toggleLoginMenu = (e: React.MouseEvent) => {
         e.preventDefault();
-        console.log("🚀 ~ toggleLoginMenu ~ showLoginMenu:", showLoginMenu)
-
         setShowLoginMenu(!showLoginMenu);
     };
 
@@ -180,7 +178,7 @@ useEffect(() => {
                             {searchElement}
                         </div>
                     </div>
-                    <div className="actions flex items-center gap-2">{linkElement}</div>
+                    <div className="actions flex items-center gap-5">{linkElement}</div>
                 </section>
 
                 <section className="flex items-center lg:hidden">

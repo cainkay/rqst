@@ -41,8 +41,6 @@ export default function Profile({ mustVerifyEmail, status, categories, app_categ
     });
 
     const [showManangement, setShowManagement] = useState(user?.subscribed && !user?.is_free_trial ? false : true);
-    console.log('🚀 ~ Profile ~ errors:', errors);
-    console.log('🚀 ~ Profile ~ data:', data);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();

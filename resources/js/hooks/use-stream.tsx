@@ -55,7 +55,6 @@ export const useStream = ({
       return allPages.length + 1;
     },
   });
-    console.log("🚀 ~ user:", user)
 
   // Extract all streams from all pages
   const allStreams = data?.pages.flatMap(page => [page.stream]) || [];

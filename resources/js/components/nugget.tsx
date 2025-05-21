@@ -28,8 +28,6 @@ const Nugget = ({ nugget, action, className = '' }: Props) => {
     const saveButtonRef = useRef<HTMLButtonElement>(null);
 
     const toggleSave = async () => {
-        console.log('🚀 ~ user:', user);
-
         if (!user) {
             displayPaywall(true);
             return;
@@ -69,7 +67,7 @@ const Nugget = ({ nugget, action, className = '' }: Props) => {
                     <PinIcon className="size-4" />
                     {nugget.lga},&nbsp;{nugget.state}
                 </p>
-               {!user?.is_free_trial && <div className="relative">
+               {user && !user?.is_free_trial && <div className="relative">
                     <Button
                         ref={saveButtonRef}
                         variant={'ghost'}

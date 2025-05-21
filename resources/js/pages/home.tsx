@@ -35,7 +35,7 @@ export default function Welcome({ stream, categories, lgas }: Props) {
         initialStream: stream,
         user: user,
     });
-    console.log('🚀 ~ Welcome ~ streams:', streams);
+    console.log(' ~ Welcome ~ streams:', streams);
 
     const handleCategorySelect = (categoryId: number) => {
         const currentCategories = [...selectedCategories];

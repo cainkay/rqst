@@ -10,6 +10,7 @@ use App\Models\Stream;
 use App\Models\Nugget;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class StreamController extends Controller
@@ -19,12 +20,15 @@ class StreamController extends Controller
         // Validate the incoming request
         $validator = Validator::make($request->all(), [
             'data' => 'required|array',
-            'data.*.Category' => 'required|string',
-            'data.*.Description' => 'required|string',
-            'data.*.URL' => 'required|string|url',
-            'data.*.Date' => 'required|string',
-            'data.*.State' => 'required|string',
-            'data.*.LGA' => 'nullable|string',
+            'data.Title' => 'required|string',
+            'data.Date' => 'required|string',
+            'data.Releases' => 'required|array',
+            'data.Releases.*.Category' => 'required|string',
+            'data.Releases.*.Description' => 'required|string',
+            'data.Releases.*.URL' => 'required|string|url',
+            'data.Releases.*.Date' => 'required|string',
+            'data.Releases.*.State' => 'required|string',
+            'data.Releases.*.LGA' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -34,54 +38,55 @@ class StreamController extends Controller
             ], 422);
         }
 
+        // Start a database transaction
+        DB::beginTransaction();
+        
         try {
             // Get the data from the request
             $streamData = $request->input('data');
+            $streamTitle = $streamData['Title'];
+            $streamDate = Carbon::parse($streamData['Date']);
+            $releasesData = $streamData['Releases'];
             
-            // Find the most recent date from the nuggets to use for the stream
-            $mostRecentDate = null;
-            foreach ($streamData as $nuggetData) {
-                $date = Carbon::parse($nuggetData['Date']);
-                if ($mostRecentDate === null || $date->greaterThan($mostRecentDate)) {
-                    $mostRecentDate = $date;
-                }
-            }
-            
-            // Create a stream record with the most recent date
+            // Create a stream record with the provided title and date
             $stream = Stream::create([
-                'description' => 'Data import on ' . $mostRecentDate->toDateString(),
-                'date' => $mostRecentDate ?? now()
+                'description' => $streamTitle,
+                'date' => $streamDate
             ]);
             
             $createdNuggets = [];
             
-            // Process each nugget
-            foreach ($streamData as $nuggetData) {
+            // Process each release (nugget)
+            foreach ($releasesData as $nuggetData) {
                 // Find or create category
                 $category = Category::firstOrCreate(
                     ['title' => $nuggetData['Category']]
                 );
 
+                // Find or create government unit
                 $gov_unit = GovernmentUnit::firstOrCreate(
                     ['name' => $nuggetData['LGA']]
                 );
                 
                 // Parse the date
-                $date = Carbon::parse($nuggetData['Date']);
+                $nuggetDate = Carbon::parse($nuggetData['Date']);
                 
-                // Create the nugget with LGA
+                // Create the nugget
                 $nugget = Nugget::create([
                     'stream_id' => $stream->id,
                     'category_id' => $category->id,
                     'state' => $nuggetData['State'],
                     'lga' => $gov_unit->name,
                     'description' => $nuggetData['Description'],
-                    'date' => $date,
+                    'date' => $nuggetDate,
                     'url' => $nuggetData['URL']
                 ]);
                 
                 $createdNuggets[] = $nugget;
             }
+            
+            // If we got here, everything succeeded, so commit the transaction
+            DB::commit();
             
             // Return a success response with the created data
             return response()->json([
@@ -92,6 +97,9 @@ class StreamController extends Controller
             ], 201);
             
         } catch (\Exception $e) {
+            // Something went wrong, rollback the transaction
+            DB::rollBack();
+            
             Log::error('Error processing stream data: ' . $e->getMessage());
             
             return response()->json([

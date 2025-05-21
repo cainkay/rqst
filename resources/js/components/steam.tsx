@@ -13,7 +13,6 @@ interface Props {
     isAllowed?: boolean;
 }
 const Stream = ({ hideTitle, stream, categories, isAllowed }: Props) => {
-    console.log("🚀 ~ Stream ~ categories:", categories)
     const { setSelectedCategories, clearFilters } = useFilterStore();
     const { displayPaywall } = useGlobalStore();
 
@@ -23,7 +22,6 @@ const Stream = ({ hideTitle, stream, categories, isAllowed }: Props) => {
             return;
         }
         const findCategory = categories?.find((cat) => cat.title === category);
-        console.log("🚀 ~ handleStreamCategoryClick ~ findCategory:", findCategory)
         if (!findCategory) return;
         clearFilters();
         setSelectedCategories([findCategory.id]);

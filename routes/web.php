@@ -67,7 +67,6 @@ Route::get('/checkout', function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::prefix('stream')->name('stream.')->group(function () {
-        Route::get('/saved', [StreamController::class, 'saved'])->name('saved');
 
         // View individual stream - place this AFTER specific routes
         Route::get('/{id}', [StreamController::class, 'show'])->name('show')
@@ -86,7 +85,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('releases')->name('releases.')->group(function () {
         Route::get('/', [ReleaseController::class, 'index'])->name('index');
-
+        Route::get('/saved', [ReleaseController::class, 'saved'])->name('saved')
+            ->middleware(RedirectSubscribedUsers::class);;
     });
 
     Route::prefix('nugget')->name('nugget.')->group(function () {

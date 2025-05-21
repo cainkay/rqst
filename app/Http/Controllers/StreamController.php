@@ -98,25 +98,4 @@ class StreamController extends Controller
     }
 
 
-    public function saved(Request $request)
-    {
-        $page = $request->input('page', 1);
-        $perPage = 5; // Number of items per page
-        $offset = ($page - 1) * $perPage;
-
-        $nuggets = Auth::user()->savedNuggets()
-            ->orderBy('created_at', 'desc')
-            ->offset($offset)
-            ->limit($perPage)
-            ->get();
-
-        // Add is_saved property to each nugget
-        $nuggets->transform(function ($nugget) {
-            $nugget->is_saved = true; // These are all saved by definition
-            return $nugget;
-        });
-
-
-        return Inertia::render('stream/saved', ['nuggets' => $nuggets]);
-    }
 }

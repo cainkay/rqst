@@ -61,8 +61,12 @@ class SendStream extends Command
                     $hasNoSubscriptions = $subscribedCategoryIds->isEmpty() && 
                                          $subscribedStates->isEmpty() && 
                                          $subscribedLgas->isEmpty();
+
+                    $subscribed = $user->subscribed()
+                        ? true
+                        : $user->created_at->diffInDays(now()) <= 14;
                     
-                    if ($hasNoSubscriptions) {
+                    if ($hasNoSubscriptions || !$subscribed) {
                         // User has no subscriptions, send all nuggets
                         $this->info("Sending all categories to {$user->email}");
                         Mail::to($user->email)->send(new DailyStream($stream, $allNuggetsByCategory, $user));

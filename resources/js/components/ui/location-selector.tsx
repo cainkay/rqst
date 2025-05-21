@@ -62,7 +62,7 @@ export const LocationSelector: React.FC<LocationSelectorProps> = ({
   };
 
   return (
-    <div className="flex flex-col gap-4 px-6 py-4 text-white">
+    <div className="flex flex-col gap-4  text-white flex-1">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* States Dropdown */}
         <div>

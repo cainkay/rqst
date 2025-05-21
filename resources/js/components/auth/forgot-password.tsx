@@ -24,9 +24,7 @@ const ForgotPassword = ({ action }: Props) => {
             onError: () => {
                 setMessage('');
             },
-            onFinish: (response) => {
-                console.log('🚀 ~ post ~ response:', response);
-            },
+        
         });
     };
     return (

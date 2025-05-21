@@ -1,61 +1,122 @@
 import Nugget from '@/components/nugget';
+import Search from '@/components/search';
+import StreamHeader from '@/components/stream-header';
+import { Button } from '@/components/ui/button';
+import { useSavedReleases } from '@/hooks/use-saved-releases';
 import Layout from '@/layouts/layout';
 import { cn } from '@/lib/utils';
-import { Nugget as NuggetType } from '@/types/stream';
-import { useRef, useState } from 'react';
+import { useFilterStore } from '@/store/filter';
+import { SharedData } from '@/types';
+import { State } from '@/types/state';
+import { Category, Nugget as NuggetType } from '@/types/stream';
+import { usePage } from '@inertiajs/react';
+import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
 
 interface Props {
-    nuggets: NuggetType[];
+    releases: {
+        data: NuggetType[];
+        last_page: number;
+        current_page: number;
+        total: number;
+        per_page: number;
+    };
+
+    categories: Category[];
+    lgas: State[];
 }
 
-const StreamsSaved = ({ nuggets }: Props) => {
-    const [nuggetList, setNuggetList] = useState(nuggets);
-    const [animatingId, setAnimatingId] = useState<number | null>(null);
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+const StreamSaved = ({ releases, categories, lgas }: Props) => {
+    const page = usePage<SharedData>();
+    const user = page.props.auth?.user;
+    const [searchTrigger, setSearchTrigger] = useState<Date>();
 
-    const handleNuggetUnsave = (id: number) => {
-        // Set the animating ID to trigger the animation
-        setAnimatingId(id);
+    const {
+        selectedStates,
+        setSelectedStates,
+        selectedLGAs,
+        setSelectedLGAs,
+        selectedCategories,
+        setSelectedCategories,
+        dateRange: date,
+        setDateRange: setDate,
+        searchTerm,
+    } = useFilterStore();
 
-        // Clear any existing timeout
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
+    const { nuggets, loadMore, hasMorePages, isLoadingMore, isLoading, refetch } = useSavedReleases({
+        initialData: releases,
+        categories: selectedCategories,
+        lgas: selectedLGAs,
+        states: selectedStates,
+        search: searchTerm,
+        date: date,
+        trigger: searchTrigger,
+    });
+
+    const handleCategorySelect = (categoryId: number) => {
+        const currentCategories = [...selectedCategories];
+        if (currentCategories.includes(categoryId)) {
+            currentCategories.splice(currentCategories.indexOf(categoryId), 1);
+        } else {
+            currentCategories.push(categoryId);
         }
+        setSelectedCategories(currentCategories);
+    };
 
-        // Wait for animation to complete before removing from state
-        timeoutRef.current = setTimeout(() => {
-            setNuggetList((prevNuggets) => prevNuggets.filter((nugget) => nugget.id !== id));
-            setAnimatingId(null);
-        }, 500); // Match this with the animation duration
+    const handleNuggetUnsave = () => {
+        refetch();
     };
 
     return (
         <Layout>
-            <main className="off-center-container py-30">
-                <h1 className="mb-10 text-4xl font-bold">Saved Nuggets</h1>
-                <div className='border'>
-                    {nuggetList.length > 0 ? (
-                        nuggetList.map((nugget) => (
-                            <div
-                                key={nugget.id}
-                                className={cn(
-                                    'transform transition-all duration-500 ease-in-out',
-                                    animatingId === nugget.id ? '-translate-x-full opacity-0' : 'opacity-100',
-                                )}
-                            >
-                                <Nugget nugget={nugget} action={handleNuggetUnsave} />
-                            </div>
-                        ))
-                    ) : (
-                        <div className="transition-opacity duration-500 ease-in">
-                            <h2 className="mb-4 text-2xl font-bold">No Nuggets Found</h2>
-                            <p className="text-gray-500">It seems you haven't saved any nuggets yet.</p>
-                        </div>
-                    )}
+            {!searchTerm && (
+                <div className="off-center-container-no-padding">
+                    <Search
+                        isAllowed={user?.subscribed || false}
+                        selectedLGAs={selectedLGAs}
+                        setSelectedLGAs={setSelectedLGAs}
+                        lgas={lgas}
+                        selectedStates={selectedStates}
+                        setSelectedStates={setSelectedStates}
+                        date={date}
+                        onSearch={() => setSearchTrigger(new Date())}
+                        setDate={setDate}
+                        categories={categories}
+                        selectedCategories={selectedCategories}
+                        onCategorySelect={handleCategorySelect}
+                    />
                 </div>
+            )}
+
+            <main className="lg:off-center-container">
+                <StreamHeader source={'releases.saved'} categories={categories} reload={() => setSearchTrigger(new Date())} />
+                {!isLoading ? (
+                    <div className="">
+                        {nuggets.map((nugget, index) => (
+                            <Nugget
+                                action={handleNuggetUnsave}
+                                nugget={nugget}
+                                key={nugget?.id}
+                                className={cn('border-b px-5 lg:px-10', index === 0 && 'border-t')}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="flex h-96 items-center justify-center">
+                        <Loader2 className="animate-spin" />
+                    </div>
+                )}
+                {user && hasMorePages ? (
+                    <Button className="my-5 rounded-full" size={'lg'} disabled={isLoadingMore} onClick={() => loadMore()}>
+                        {isLoadingMore && <Loader2 className="animate-spin" />}
+                        Load more
+                    </Button>
+                ) : (
+                    <p className="py-10">This is the end</p>
+                )}
             </main>
         </Layout>
     );
 };
 
-export default StreamsSaved;
+export default StreamSaved;

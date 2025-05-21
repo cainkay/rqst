@@ -8,12 +8,8 @@ interface Props {
     categories?: Category[];
 }
 const StreamDetail = ({ stream, categories }: Props) => {
-    console.log("🚀 ~ StreamDetail ~ categories:", categories)
-console.log("🚀 ~ StreamDetail ~ stream:", stream)
-
     const page = usePage<SharedData>();
     const user = page.props.auth?.user;
-    console.log('🚀 ~ StreamDetail ~ user:', user);
     return (
         <Layout>
             <main className="">
