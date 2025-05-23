@@ -35,9 +35,10 @@ class SendStream extends Command
         try {
             $users = User::all();
             $stream = Stream::with(['nuggets.category'])->latest()->first();
-            
-            if (!$stream) {
-                $this->error('No stream available to send.');
+
+            //check if date is yesterday
+            if ($stream->created_at->isYesterday()) {
+                $this->info('Stream is not ready yet, exiting...');
                 return;
             }
             
